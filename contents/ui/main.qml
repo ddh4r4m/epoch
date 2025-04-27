@@ -92,10 +92,7 @@ PlasmoidItem {
             id: timeContainer
             width: childrenRect.width
             height: childrenRect.height
-            anchors.right: base.right
-            anchors.rightMargin: 20
-            anchors.top: base.top
-            anchors.topMargin: 20
+            anchors.centerIn: base
             
             Row {
                 id: timeRow
@@ -112,7 +109,7 @@ PlasmoidItem {
                     ? String(currentDate.getHours())
                     : String(currentDate.getHours() - 12)))
                     : Qt.formatDateTime(currentDate, "HH")
-                    font.pixelSize: Math.min(mainContainer.width, mainContainer.height) * 0.12
+                    font.pixelSize: Math.min(mainContainer.width, mainContainer.height) * 0.36
                     font.family: metro.name
                     font.weight: Font.Bold
                     
