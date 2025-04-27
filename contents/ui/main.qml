@@ -53,14 +53,7 @@ PlasmoidItem {
         width: plasmoid.width
         height: plasmoid.height
         
-        // Dark teal background matching the screenshot
-        Rectangle {
-            id: backgroundFill
-            anchors.fill: parent
-            color: "#1B3441"
-        }
-        
-        // Main rectangle with glow
+        // Main rectangle with glow - this is now the only box
         Rectangle {
             id: base
             width: parent.width * 0.95
@@ -77,26 +70,21 @@ PlasmoidItem {
                 color: "#9747c7"  // Purple glow color from screenshot
                 spread: 0.2
             }
-            
-            // Empty interior to match screenshot (hollow rectangle)
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: 3
-                radius: parent.radius - 2
-                color: parent.color
-            }
         }
         
         // Time display (16:20)
         Item {
             id: timeContainer
-            width: childrenRect.width
+            width: base.width
             height: childrenRect.height
             anchors.centerIn: base
             
             Row {
                 id: timeRow
                 spacing: 0
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.left: undefined
+                anchors.right: undefined
                 
                 // Hours with blue gradient
                 Text {
@@ -171,18 +159,19 @@ PlasmoidItem {
             }
         }
         
-        // Date display at bottom right
+        // Date display centered below time
         Text {
             id: dateText
+            width: base.width
+            horizontalAlignment: Text.AlignHCenter
             property var currentDate: hora.currentDate
             text: Qt.formatDateTime(currentDate, "MMM, dddd d")
-            font.pixelSize: Math.min(mainContainer.width, mainContainer.height) * 0.05
-            font.family: "Arial"
+            font.pixelSize: Math.min(mainContainer.width, mainContainer.height) * 0.08
+            font.family: hora.font.family
             color: "#CC73E1"  // Light purple
-            anchors.right: base.right
-            anchors.rightMargin: 20
-            anchors.bottom: base.bottom
-            anchors.bottomMargin: 15
+            anchors.horizontalCenter: timeContainer.horizontalCenter
+            anchors.top: timeContainer.bottom
+            anchors.topMargin: 2
         }
 
         Timer {
