@@ -48,50 +48,57 @@ PlasmoidItem {
         source: "../fonts/Metropolis-Black.ttf"
     }
 
-    fullRepresentation: RowLayout {
-        Layout.minimumWidth: 300
-        Layout.minimumHeight: 150
-        Layout.preferredWidth: Layout.minimumWidth
-        Layout.preferredHeight: Layout.minimumHeight
+    fullRepresentation: Item {
+        id: mainContainer
+        width: plasmoid.width
+        height: plasmoid.height
         
-        // Main background with glow effect
+        // Dark teal background matching the screenshot
         Rectangle {
-            id: baseBackground
-            Layout.preferredWidth: parent.width
-            Layout.preferredHeight: parent.height
-            color: "#272640"  // Dark purple-blue background
+            id: backgroundFill
+            anchors.fill: parent
+            color: "#1B3441"
+        }
+        
+        // Main rectangle with glow
+        Rectangle {
+            id: base
+            width: parent.width * 0.95
+            height: parent.height * 0.85
+            radius: height/10
+            color: "#262842"  // Dark purple-blue interior
             anchors.centerIn: parent
             
-            // Clock background with rounded corners
+            // Purple glow border effect
+            layer.enabled: true
+            layer.effect: Glow {
+                radius: 15
+                samples: 24
+                color: "#9747c7"  // Purple glow color from screenshot
+                spread: 0.2
+            }
+            
+            // Empty interior to match screenshot (hollow rectangle)
             Rectangle {
-                id: base
-                width: Math.max(clockLayout.width + 60, parent.width * 0.8)
-                height: Math.max(clockLayout.height + 60, parent.height * 0.7)
-                radius: height/8
-                color: "#2D2D3F"  // Slightly lighter than the background
-                anchors.centerIn: parent
-                
-                // Add glow effect
-                layer.enabled: true
-                layer.effect: Glow {
-                    radius: 20
-                    samples: 41
-                    color: "#7747AC"  // Purple glow
-                    spread: 0.2
-                }
+                anchors.fill: parent
+                anchors.margins: 3
+                radius: parent.radius - 2
+                color: parent.color
             }
         }
-
-        // Clock components layout
-        ColumnLayout {
-            id: clockLayout
-            anchors.centerIn: base
-            spacing: 10
+        
+        // Time display (16:20)
+        Item {
+            id: timeContainer
+            width: childrenRect.width
+            height: childrenRect.height
+            anchors.right: base.right
+            anchors.rightMargin: 20
+            anchors.top: base.top
+            anchors.topMargin: 20
             
-            // Main time display (hours, colon, minutes)
-            RowLayout {
+            Row {
                 id: timeRow
-                Layout.alignment: Qt.AlignHCenter
                 spacing: 0
                 
                 // Hours with blue gradient
@@ -102,13 +109,12 @@ PlasmoidItem {
                     ? (currentDate.getHours() === 0
                     ? "12"
                     : (currentDate.getHours() <= 12
-                    ? String(currentDate.getHours()).padStart(2, '0')
-                    : String(currentDate.getHours() - 12).padStart(2, '0')))
+                    ? String(currentDate.getHours())
+                    : String(currentDate.getHours() - 12)))
                     : Qt.formatDateTime(currentDate, "HH")
-                    font.pixelSize: Math.min(base.width, base.height) * 0.25
+                    font.pixelSize: Math.min(mainContainer.width, mainContainer.height) * 0.12
                     font.family: metro.name
                     font.weight: Font.Bold
-                    Layout.alignment: Qt.AlignBottom
                     
                     LinearGradient {
                         anchors.fill: parent
@@ -124,13 +130,11 @@ PlasmoidItem {
                 
                 // Colon separator
                 Text {
-                    id: colon
                     text: ":"
-                    font.pixelSize: hora.font.pixelSize 
+                    font.pixelSize: hora.font.pixelSize
                     font.family: hora.font.family
                     font.weight: Font.Bold
-                    color: "#DDDDDD"  // Light gray
-                    Layout.alignment: Qt.AlignBottom
+                    color: "#DDDDDD"
                 }
                 
                 // Minutes with orange-pink gradient
@@ -141,7 +145,6 @@ PlasmoidItem {
                     font.pixelSize: hora.font.pixelSize
                     font.family: hora.font.family
                     font.weight: Font.Bold
-                    Layout.alignment: Qt.AlignBottom
                     
                     LinearGradient {
                         anchors.fill: parent
@@ -154,46 +157,35 @@ PlasmoidItem {
                         }
                     }
                 }
-                
-                // AM/PM indicator
-                Text {
-                    id: ampm
-                    visible: formato12Hour
-                    property var currentDate: hora.currentDate
-                    text: currentDate.getHours() < 12 ? "AM" : "PM"
-                    font.pixelSize: hora.font.pixelSize * 0.3
-                    font.family: hora.font.family
-                    font.weight: Font.Bold
-                    color: "#FFD166"  // Gold/yellow
-                    Layout.alignment: Qt.AlignTop
-                    Layout.leftMargin: 5
-                }
             }
             
-            // Seconds display
+            // Seconds as superscript
             Text {
                 id: segundos
                 property var currentDate: hora.currentDate
                 text: Qt.formatDateTime(currentDate, "ss")
-                font.pixelSize: hora.font.pixelSize * 0.3
+                font.pixelSize: hora.font.pixelSize * 0.4
                 font.family: hora.font.family
                 font.weight: Font.Bold
                 color: "#4DD8C8"  // Teal
-                Layout.alignment: Qt.AlignRight
-                Layout.rightMargin: 10
+                anchors.left: timeRow.right
+                anchors.top: timeRow.top
+                anchors.topMargin: -5
             }
-            
-            // Date display
-            Text {
-                id: dateText
-                property var currentDate: hora.currentDate
-                text: Qt.formatDateTime(currentDate, "MMM, dddd d")
-                font.pixelSize: hora.font.pixelSize * 0.25
-                font.family: "Arial"
-                color: "#CC73E1"  // Light purple
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 5
-            }
+        }
+        
+        // Date display at bottom right
+        Text {
+            id: dateText
+            property var currentDate: hora.currentDate
+            text: Qt.formatDateTime(currentDate, "MMM, dddd d")
+            font.pixelSize: Math.min(mainContainer.width, mainContainer.height) * 0.05
+            font.family: "Arial"
+            color: "#CC73E1"  // Light purple
+            anchors.right: base.right
+            anchors.rightMargin: 20
+            anchors.bottom: base.bottom
+            anchors.bottomMargin: 15
         }
 
         Timer {
