@@ -2,12 +2,12 @@
     "KPlugin": {
         "Authors": [
             {
-                "Email": "adolfo@librepixels.com",
-                "Name": "zayronxio"
+                "Email": "ddh4r4@gmail.com",
+                "Name": "Dharam Dhurandhar"
             }
         ],
-        "Name": "CircleClock",
-        "Id": "CircleClock",
+        "Name": "Iridescent",
+        "Id": "Iridescent",
         "Description": "Plasmoid showing current date and clock",
         "Category": "Utilities",
         "Icon": "clock",

@@ -59,7 +59,7 @@ PlasmoidItem {
             width: parent.width * 0.95
             height: parent.height * 0.85
             radius: height/10
-            color: "#262842"  // Dark purple-blue interior
+            color: "#00001B"  // Dark purple-blue interior
             anchors.centerIn: parent
             
             // Purple glow border effect
